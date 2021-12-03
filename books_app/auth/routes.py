@@ -3,9 +3,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from books_app.models import Book, Author, Genre, User
 from books_app.auth.forms import SignUpForm, LoginForm
+from books_app import bcrypt
 
 # Import app and db from events_app package so that we can run app
-from books_app.extensions import app, db, bcrypt
+from books_app import app, db
 
 auth = Blueprint("auth", __name__)
 
@@ -22,6 +23,7 @@ def signup():
         db.session.commit()
         flash('Account Created.')
         return redirect(url_for('auth.login'))
+    print(form.errors)
     return render_template('signup.html', form=form)
 
 
@@ -33,6 +35,7 @@ def login():
         login_user(user, remember=True)
         next_page = request.args.get('next')
         return redirect(next_page if next_page else url_for('main.homepage'))
+    print(form.errors)
     return render_template('login.html', form=form)
 
 @auth.route('/logout')
